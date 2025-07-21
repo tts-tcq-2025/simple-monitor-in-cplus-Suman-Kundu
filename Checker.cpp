@@ -2,36 +2,40 @@
 #include <iostream>
 using namespace std;
 
+//Check Temperature parameter range
 bool TemperatureIsOk(float temperature) {
   if(temperature < 0 || temperature > 45) {
-     cout << "Temperature out of range!\n";
+     cout << "Temperature out of range!\n";      //Temperature range should be between 0 and 45 
      return false;
   }
   return true;
 }
 
+//Check State of Charge parameter range
 bool SocIsOk(float soc) {
   if(soc < 20 || soc > 80) {
-     cout << "State of Charge out of range!\n";
+     cout << "State of Charge out of range!\n";   //State of Charge range should be between 20 and 80 
      return false;
   }
   return true;
 }
 
+//Check Charge rate parameter range
 bool ChargeRateIsOk(float chargeRate) {
    if(chargeRate < 0.0f || chargeRate > 0.8f) {
-       cout << "Charge Rate out of range!\n";
+       cout << "Charge Rate out of range!\n";      //Charge Rate range should be between 0.0 and 0.8
        return false;
    }
    return true;
 }
 
+//Check the battery status
 bool batteryIsOk(float temperature, float soc, float chargeRate) {
   bool temperature_status = TemperatureIsOk(temperature);
   bool soc_status = SocIsOk(soc);
   bool chargeRate_status = ChargeRateIsOk(chargeRate);
 
-  return temperature_status && soc_status && chargeRate_status;
+  return temperature_status && soc_status && chargeRate_status;    //If any of the statuses fail, the battery status will be false.
 }
 
 int main() {
