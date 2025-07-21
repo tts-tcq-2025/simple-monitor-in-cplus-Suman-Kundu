@@ -38,7 +38,7 @@ int main() {
     // Good case
     assert(batteryIsOk(25, 70, 0.7) == true);
 
-    Failed cases
+    //Failed cases
     assert(batteryIsOk(-1, 50, 0.7) == false);  // Temp low
     assert(batteryIsOk(48, 70, 0.6) == false);  // Temp high
     assert(batteryIsOk(32, 18, 0.5) == false);  // SOC low
