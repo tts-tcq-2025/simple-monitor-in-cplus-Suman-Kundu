@@ -1,41 +1,69 @@
-#include <assert.h>
 #include <iostream>
+#include <assert.h>
+
 using namespace std;
 
-//Check Temperature parameter range
-bool TemperatureIsOk(float temperature) {
-  if(temperature < 0 || temperature > 45) {
-     cout << "Temperature out of range!\n";      //Temperature range should be between 0 and 45 
-     return false;
-  }
-  return true;
+// Enum to identify parameters
+typedef enum Parameter_ge {
+    TEMPERATURE_e,
+    SOC_e,
+    CHARGE_RATE_e,
+} Parameter_te;
+
+// Threshold constants
+const float MIN_TEMPERATURE = 0.0f;
+const float MAX_TEMPERATURE = 45.0f;
+
+const float MIN_SOC = 20.0f;
+const float MAX_SOC = 80.0f;
+
+const float MAX_CHARGE_RATE = 0.8f;
+
+// Console printer for parameter errors
+void PrintConsole(int type) {
+    if(type == TEMPERATURE_e)
+        cout << "Temperature out of range!" << endl;
+    else if(type == SOC_e)
+        cout << "State of Charge out of range!" << endl;
+    else if(type == CHARGE_RATE_e)
+        cout << "Charge Rate out of range!" << endl;
 }
 
-//Check State of Charge parameter range
-bool SocIsOk(float soc) {
-  if(soc < 20 || soc > 80) {
-     cout << "State of Charge out of range!\n";   //State of Charge range should be between 20 and 80 
-     return false;
-  }
-  return true;
+// Generic range checker
+bool ValidateRange(float value, float min, float max, Parameter_te type, void (*console)(int)) {
+    bool isOk = (value >= min && value <= max);
+    if (!isOk) {
+        console(type);
+    }
+    return isOk;
 }
 
-//Check Charge rate parameter range
-bool ChargeRateIsOk(float chargeRate) {
-   if(chargeRate < 0.0f || chargeRate > 0.8f) {
-       cout << "Charge Rate out of range!\n";      //Charge Rate range should be between 0.0 and 0.8
-       return false;
-   }
-   return true;
+// Individual checks using ValidateRange
+bool TemperatureIsOk(float temperature, void (*console)(int)) {
+    return ValidateRange(temperature, MIN_TEMPERATURE, MAX_TEMPERATURE, TEMPERATURE_e, console);
 }
 
-//Check the battery status
+bool SocIsOk(float soc, void (*console)(int)) {
+    return ValidateRange(soc, MIN_SOC, MAX_SOC, SOC_e, console);
+}
+
+bool ChargeRateIsOk(float chargeRate, void (*console)(int)) {
+    return ValidateRange(chargeRate, 0.0f, MAX_CHARGE_RATE, CHARGE_RATE_e, console);
+}
+
+//Checks battery health status
 bool batteryIsOk(float temperature, float soc, float chargeRate) {
-  bool temperature_status = TemperatureIsOk(temperature);
-  bool soc_status = SocIsOk(soc);
-  bool chargeRate_status = ChargeRateIsOk(chargeRate);
 
-  return temperature_status && soc_status && chargeRate_status;    //If any of the statuses fail, the battery status will be false.
+  if (TemperatureIsOk(temperature, PrintConsole) == false){
+      return false;
+  }
+  else if(SocIsOk(soc, PrintConsole) == false){
+      return false;
+  }
+  else if(ChargeRateIsOk(chargeRate, PrintConsole) == false){
+      return false;
+  }
+  return true;
 }
 
 int main() {
@@ -58,4 +86,8 @@ int main() {
     assert(batteryIsOk(46, 80, 0.8) == false);   // Temp high
     assert(batteryIsOk(0, 80, 0.9) == false);    // Charge rate high
     assert(batteryIsOk(45, 19, 0.8) == false);   // Soc high
+    
+    
+    return 0;
+    
 }
