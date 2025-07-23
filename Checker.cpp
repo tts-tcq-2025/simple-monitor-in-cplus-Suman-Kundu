@@ -10,6 +10,13 @@ typedef enum Parameter_ge {
     CHARGE_RATE_e,
 } Parameter_te;
 
+//Error messages
+const char* errorMessages[] = {
+    "Temperature out of range!",
+    "State of Charge out of range!",
+    "Charge Rate out of range!"
+};
+
 // Threshold constants
 const float MIN_TEMPERATURE = 0.0f;
 const float MAX_TEMPERATURE = 45.0f;
@@ -21,12 +28,9 @@ const float MAX_CHARGE_RATE = 0.8f;
 
 // Console printer for parameter errors
 void PrintConsole(int type) {
-    if(type == TEMPERATURE_e)
-        cout << "Temperature out of range!" << endl;
-    else if(type == SOC_e)
-        cout << "State of Charge out of range!" << endl;
-    else if(type == CHARGE_RATE_e)
-        cout << "Charge Rate out of range!" << endl;
+    if(type >= 0 && type < 3) {
+        cout << errorMessages[type] << endl;
+    }
 }
 
 // Generic range checker
@@ -54,16 +58,9 @@ bool ChargeRateIsOk(float chargeRate, void (*console)(int)) {
 //Checks battery health status
 bool batteryIsOk(float temperature, float soc, float chargeRate) {
 
-  if (TemperatureIsOk(temperature, PrintConsole) == false){
-      return false;
-  }
-  else if(SocIsOk(soc, PrintConsole) == false){
-      return false;
-  }
-  else if(ChargeRateIsOk(chargeRate, PrintConsole) == false){
-      return false;
-  }
-  return true;
+    return TemperatureIsOk(temperature, PrintConsole)
+        && SocIsOk(soc, PrintConsole)
+        && ChargeRateIsOk(chargeRate, PrintConsole);
 }
 
 int main() {
