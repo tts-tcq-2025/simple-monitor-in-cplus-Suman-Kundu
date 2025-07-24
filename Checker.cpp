@@ -42,6 +42,15 @@ bool ValidateRange(float value, float min, float max, Parameter_te type, void (*
     return isOk;
 }
 
+//Only Max range checker
+bool ValidateMaxRange(float value, float max, Parameter_te type, void (*console)(int)) {
+    bool isOk = (value <= max);
+    if (!isOk) {
+        console(type);
+    }
+    return isOk;
+}
+
 // Individual checks using ValidateRange
 bool TemperatureIsOk(float temperature, void (*console)(int)) {
     return ValidateRange(temperature, MIN_TEMPERATURE, MAX_TEMPERATURE, TEMPERATURE_e, console);
@@ -52,7 +61,7 @@ bool SocIsOk(float soc, void (*console)(int)) {
 }
 
 bool ChargeRateIsOk(float chargeRate, void (*console)(int)) {
-    return ValidateRange(chargeRate, 0.0f, MAX_CHARGE_RATE, CHARGE_RATE_e, console);
+    return ValidateMaxRange(chargeRate, MAX_CHARGE_RATE, CHARGE_RATE_e, console);
 }
 
 //Checks battery health status
